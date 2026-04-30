@@ -27,9 +27,6 @@ services:
     plan: free
     region: singapore # closest to Hanoi; change if you move
     rootDir: backend
-    envVars:
-      - key: PYTHON_VERSION
-        value: 3.14.2  # Specify your desired version here
     buildCommand: |
       pip install --upgrade pip uv
       uv sync --frozen --no-dev
@@ -38,6 +35,8 @@ services:
     healthCheckPath: /health
     autoDeploy: true
     envVars:
+      - key: PYTHON_VERSION
+        value: 3.14.2 # Specify your desired version here
       # Database — set MANUALLY in the Render dashboard after first deploy.
       # Paste the Neon (or Render Postgres) connection string. Must include
       # the asyncpg driver: postgresql+asyncpg://...
