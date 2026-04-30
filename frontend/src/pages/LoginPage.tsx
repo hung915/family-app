@@ -1,9 +1,11 @@
 import { useState } from 'react'
+import { Navigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { apiClient } from '@/lib/api'
 import { Button } from '@/components/ui/button'
+import { useMe } from '@/hooks/useMe'
 
 const schema = z.object({
   email: z.string().email('Enter a valid email address'),
@@ -12,8 +14,12 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>
 
 export default function LoginPage() {
+  const { data: me, isFetching } = useMe()
   const [sent, setSent] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  if (isFetching) return null
+  if (me) return <Navigate to="/" replace />
 
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormValues>({
     resolver: zodResolver(schema),
