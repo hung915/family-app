@@ -14,16 +14,14 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>
 
 export default function LoginPage() {
-  const { data: me, isFetching } = useMe()
+  const { data: me } = useMe()
   const [sent, setSent] = useState(false)
   const [error, setError] = useState<string | null>(null)
-
-  if (isFetching) return null
-  if (me) return <Navigate to="/" replace />
-
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormValues>({
     resolver: zodResolver(schema),
   })
+
+  if (me) return <Navigate to="/" replace />
 
   async function onSubmit({ email }: FormValues) {
     setError(null)
