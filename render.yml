@@ -10,9 +10,9 @@
 #      e.g. postgresql+asyncpg://user:pass@host/db?sslmode=require).
 #
 # Notes:
-#   - Both services are on Render's free tier as configured. The API will
-#     spin down after 15 min of inactivity and take ~30s to wake up.
-#     Upgrade `plan` to `starter` ($7/mo) for always-on.
+#   - The static frontend (family-web) is free. The API (family-api) uses
+#     the starter plan ($7/mo) — Render's free tier for web services was
+#     discontinued in November 2024.
 #   - Auto-deploy is enabled by default. Render will redeploy on every
 #     push to `main`. Configure "Wait for CI" in the Render dashboard if
 #     you want it to hold until GitHub Actions pass.
@@ -24,7 +24,7 @@ services:
   - type: web
     name: family-api
     runtime: python
-    plan: free
+    plan: starter   # free tier was discontinued Nov 2024; starter = $7/mo
     region: singapore # closest to Hanoi; change if you move
     rootDir: backend
     buildCommand: |
@@ -87,8 +87,7 @@ services:
   # ---------------------------------------------------------------------------
   - type: web
     name: family-web
-    runtime: static
-    plan: free
+    runtime: static   # static sites are always free; no plan field needed
     rootDir: frontend
     buildCommand: |
       corepack enable

@@ -58,3 +58,6 @@ jobs:
           RESEND_FROM_EMAIL: "Family App <noreply@test.example>"
           API_BASE_URL: http://localhost:8000
           FRONTEND_URL: http://localhost:5173
+
+      - name: Docker build (smoke test)
+        run: docker build --tag family-api:ci .

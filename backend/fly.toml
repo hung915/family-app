@@ -1,0 +1,61 @@
+# Fly.io configuration for the Family App backend.
+#
+# First-time setup (run once from the backend/ directory):
+#
+#   fly launch --no-deploy           # creates the app, skips first deploy
+#   fly secrets set \
+#     DATABASE_URL="postgresql+asyncpg://..." \
+#     SECRET_KEY="$(python -c 'import secrets; print(secrets.token_hex(32))')" \
+#     JWT_SECRET="$(python -c 'import secrets; print(secrets.token_hex(32))')" \
+#     MAGIC_LINK_SECRET="$(python -c 'import secrets; print(secrets.token_hex(32))')" \
+#     RESEND_API_KEY="re_..." \
+#     RESEND_FROM_EMAIL="Family App <noreply@yourdomain.com>"
+#   fly deploy
+#
+# After deploying the Cloudflare Pages frontend, update CORS_ORIGINS and
+# FRONTEND_URL:
+#   fly secrets set CORS_ORIGINS='["https://<your-pages-domain>.pages.dev"]'
+#   fly secrets set FRONTEND_URL="https://<your-pages-domain>.pages.dev"
+#
+# Subsequent deploys happen automatically via `fly deploy` or push to main
+# (connect via Fly's GitHub integration in the dashboard).
+
+app = "family-api"          # change if this name is already taken on Fly
+primary_region = "sin"      # Singapore — closest to Hanoi
+
+[build]
+  dockerfile = "Dockerfile"
+
+[deploy]
+  # Runs in a temporary machine before traffic is shifted to the new version.
+  # Requires DATABASE_URL secret to be set.
+  release_command = "uv run alembic upgrade head"
+
+[env]
+  ENV            = "production"
+  API_BASE_URL   = "https://family-api.fly.dev"
+  # Set CORS_ORIGINS and FRONTEND_URL as secrets after the frontend is live
+  # so the value can include the real Cloudflare Pages URL.
+
+[http_service]
+  internal_port       = 8080
+  force_https         = true
+  auto_stop_machines  = "stop"   # spin down when idle to stay in free allowance
+  auto_start_machines = true     # wake up automatically on incoming request
+  min_machines_running = 0
+
+  [http_service.concurrency]
+    type       = "connections"
+    hard_limit = 25
+    soft_limit = 20
+
+  [[http_service.checks]]
+    grace_period = "10s"
+    interval     = "30s"
+    method       = "GET"
+    path         = "/health"
+    timeout      = "5s"
+
+[[vm]]
+  size   = "shared-cpu-1x"   # 1 shared vCPU — part of the free allowance
+  memory = "256mb"            # 256 MB — part of the free allowance
