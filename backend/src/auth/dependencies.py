@@ -23,7 +23,7 @@ async def get_current_user(
     try:
         payload = decode_jwt(token)
         member_id = UUID(payload['sub'])
-    except (JWTError, KeyError, ValueError):
+    except JWTError, KeyError, ValueError:
         raise InvalidToken() from None
 
     member = await member_service.get_by_id(session, member_id)

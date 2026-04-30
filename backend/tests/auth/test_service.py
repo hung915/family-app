@@ -22,7 +22,9 @@ async def test_get_member_by_email_found(session) -> None:
     from src.members.constants import MemberRole
     from src.members.schemas import MemberCreate
 
-    member = await member_service.create(session, MemberCreate(first_name='Test', role=MemberRole.FATHER, email='test@family.example'))
+    member = await member_service.create(
+        session, MemberCreate(first_name='Test', role=MemberRole.FATHER, email='test@family.example')
+    )
     await session.flush()
 
     found = await service.get_member_by_email(session, 'test@family.example')
