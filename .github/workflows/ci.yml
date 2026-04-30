@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  backend:
+    uses: ./.github/workflows/backend-ci.yml
+
+  frontend:
+    uses: ./.github/workflows/frontend-ci.yml
+
+  # This is the single status check to require in branch protection.
+  # It passes when both jobs succeed or are skipped; fails if either fails.
+  all-green:
+    needs: [backend, frontend]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: All checks passed
+        run: |
+          backend="${{ needs.backend.result }}"
+          frontend="${{ needs.frontend.result }}"
+          if [[ "$backend" == "failure" || "$backend" == "cancelled" \
+             || "$frontend" == "failure" || "$frontend" == "cancelled" ]]; then
+            echo "❌  backend=$backend  frontend=$frontend"
+            exit 1
+          fi
+          echo "✅  backend=$backend  frontend=$frontend"
