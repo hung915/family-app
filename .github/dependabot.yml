@@ -8,7 +8,7 @@ updates:
     commit-message:
       prefix: ⬆
 
-  # npm (frontend)
+  # pnpm (frontend)
   - package-ecosystem: "npm"
     directory: "/frontend"
     schedule:
@@ -16,8 +16,8 @@ updates:
     commit-message:
       prefix: ⬆
 
-  # pip (backend)
-  - package-ecosystem: "pip"
+  # uv (backend)
+  - package-ecosystem: "uv"
     directory: "/backend"
     schedule:
       interval: "weekly"
