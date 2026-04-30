@@ -60,9 +60,10 @@ async def validation_error_handler(request: Request, exc: RequestValidationError
 
 @app.exception_handler(Exception)
 async def unhandled_error_handler(request: Request, exc: Exception) -> JSONResponse:
+    detail = str(exc) if settings.ENV in ('local', 'staging') else 'An unexpected error occurred'
     return JSONResponse(
         status_code=500,
-        content={'code': 'INTERNAL_ERROR', 'detail': 'An unexpected error occurred'},
+        content={'code': 'INTERNAL_ERROR', 'detail': detail},
     )
 
 

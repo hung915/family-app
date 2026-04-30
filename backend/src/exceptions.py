@@ -18,19 +18,19 @@ class AppError(HTTPException):
         super().__init__(status_code=self.STATUS_CODE, detail=self.CODE)
 
 
-class NotFound(AppError):
+class NotFoundError(AppError):
     STATUS_CODE = status.HTTP_404_NOT_FOUND
     CODE = 'NOT_FOUND'
     MESSAGE = 'Resource not found'
 
 
-class BadRequest(AppError):
+class BadRequestError(AppError):
     STATUS_CODE = status.HTTP_400_BAD_REQUEST
     CODE = 'BAD_REQUEST'
     MESSAGE = 'Bad request'
 
 
-class Unauthorized(AppError):
+class UnauthorizedError(AppError):
     STATUS_CODE = status.HTTP_401_UNAUTHORIZED
     CODE = 'UNAUTHORIZED'
     MESSAGE = 'Authentication required'
@@ -40,7 +40,7 @@ class Unauthorized(AppError):
         self.headers = {'WWW-Authenticate': 'Bearer'}
 
 
-class Forbidden(AppError):
+class ForbiddenError(AppError):
     STATUS_CODE = status.HTTP_403_FORBIDDEN
     CODE = 'FORBIDDEN'
     MESSAGE = 'Access denied'
