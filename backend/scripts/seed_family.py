@@ -23,17 +23,19 @@ class _Seed:
     role: MemberRole
     nickname: str | None = None
     due_date: date | None = field(default=None)
+    email: str
 
 
 # TODO: replace placeholder names with real ones before running.
 _MEMBERS: list[_Seed] = [
-    _Seed(first_name='Dad', role=MemberRole.FATHER),
-    _Seed(first_name='Mom', role=MemberRole.MOTHER),
-    _Seed(first_name='Big Sister', role=MemberRole.CHILD),
+    _Seed(first_name='Dad', role=MemberRole.FATHER, email='hungltu14@gmail.com'),
+    _Seed(first_name='Mom', role=MemberRole.MOTHER, email='kemda0210@gmail.com'),
+    _Seed(first_name='Big Sister', role=MemberRole.CHILD, email='mina@gmail.com'),
     _Seed(
         first_name='Baby',
         role=MemberRole.UNBORN,
         due_date=date(2026, 12, 15),  # TODO: set the real due date
+        email='baby@gmail.com',
     ),
 ]
 
