@@ -1,12 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api'
 import { Button } from '@/components/ui/button'
-
-async function fetchMe() {
-  const { data, error } = await apiClient.GET('/auth/me')
-  if (error) throw error
-  return data
-}
+import { useMe } from '@/hooks/useMe'
 
 async function fetchMembers() {
   const { data, error } = await apiClient.GET('/members')
@@ -15,7 +10,7 @@ async function fetchMembers() {
 }
 
 export default function HomePage() {
-  const { data: me } = useQuery({ queryKey: ['me'], queryFn: fetchMe })
+  const { data: me } = useMe()
   const { data: members } = useQuery({ queryKey: ['members'], queryFn: fetchMembers })
 
   async function handleLogout() {
