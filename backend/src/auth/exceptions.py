@@ -3,20 +3,20 @@ from src.exceptions import BadRequest, Unauthorized
 
 
 class InvalidToken(Unauthorized):
-    def __init__(self) -> None:
-        super().__init__(detail=ErrorCode.INVALID_TOKEN)
+    CODE = ErrorCode.INVALID_TOKEN
+    MESSAGE = 'Invalid or expired link'
 
 
 class TokenExpired(Unauthorized):
-    def __init__(self) -> None:
-        super().__init__(detail=ErrorCode.TOKEN_EXPIRED)
+    CODE = ErrorCode.TOKEN_EXPIRED
+    MESSAGE = 'Login link has expired, please request a new one'
 
 
 class EmailNotAllowed(BadRequest):
-    def __init__(self) -> None:
-        super().__init__(detail=ErrorCode.EMAIL_NOT_ALLOWED)
+    CODE = ErrorCode.EMAIL_NOT_ALLOWED
+    MESSAGE = 'This email is not registered in the family'
 
 
 class NotAuthenticated(Unauthorized):
-    def __init__(self) -> None:
-        super().__init__(detail=ErrorCode.NOT_AUTHENTICATED)
+    CODE = ErrorCode.NOT_AUTHENTICATED
+    MESSAGE = 'Please sign in to continue'

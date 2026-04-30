@@ -3,5 +3,10 @@ from src.members.constants import ErrorCode
 
 
 class MemberNotFound(NotFound):
-    def __init__(self) -> None:
-        super().__init__(detail=ErrorCode.MEMBER_NOT_FOUND)
+    CODE = ErrorCode.MEMBER_NOT_FOUND
+    MESSAGE = 'Member not found'
+
+
+class MemberAlreadyExists(NotFound):
+    CODE = ErrorCode.MEMBER_ALREADY_EXISTS
+    MESSAGE = 'A member with this email already exists'

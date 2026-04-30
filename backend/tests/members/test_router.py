@@ -86,7 +86,7 @@ async def test_get_member_not_found(client: AsyncClient) -> None:
     with patch('src.members.service.get_by_id', new_callable=AsyncMock, return_value=None):
         response = await client.get(f'/members/{uuid4()}')
     assert response.status_code == 404
-    assert response.json()['detail'] == 'MEMBER_NOT_FOUND'
+    assert response.json()['code'] == 'MEMBER_NOT_FOUND'
 
 
 # ── update ────────────────────────────────────────────────────────────────────

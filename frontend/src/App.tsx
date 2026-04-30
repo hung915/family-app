@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { QueryClientProvider } from '@tanstack/react-query'
+import { Toaster } from '@/components/ui/sonner'
 import { queryClient } from '@/lib/queryClient'
 import { ProtectedRoute } from '@/components/ProtectedRoute'
 import { membersRoutes } from '@/features/members'
@@ -9,6 +10,7 @@ import HomePage from '@/pages/HomePage'
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
+      <Toaster position="bottom-right" richColors />
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<LoginPage />} />

@@ -31,6 +31,7 @@ services:
       pip install --upgrade pip uv
       uv sync --frozen --no-dev
       uv run alembic upgrade head
+      uv run python -m scripts.seed_family
     startCommand: uv run uvicorn src.main:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /health
     autoDeploy: true

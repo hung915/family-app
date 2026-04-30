@@ -25,7 +25,7 @@ async def test_request_link_unknown_email(client: AsyncClient) -> None:
     with patch('src.auth.service.get_member_by_email', new_callable=AsyncMock, return_value=None):
         response = await client.post('/auth/request-link', json={'email': 'stranger@outside.com'})
     assert response.status_code == 400
-    assert response.json()['detail'] == 'EMAIL_NOT_ALLOWED'
+    assert response.json()['code'] == 'EMAIL_NOT_ALLOWED'
 
 
 async def test_request_link_invalid_email_format(client: AsyncClient) -> None:
@@ -52,14 +52,14 @@ async def test_callback_invalid_token(client: AsyncClient) -> None:
     with patch('src.auth.router.decode_magic_token', side_effect=JWTError('bad')):
         response = await client.get('/auth/callback', params={'token': 'garbage'})
     assert response.status_code == 401
-    assert response.json()['detail'] == 'INVALID_TOKEN'
+    assert response.json()['code'] == 'INVALID_TOKEN'
 
 
 async def test_callback_expired_token(client: AsyncClient) -> None:
     with patch('src.auth.router.decode_magic_token', side_effect=ExpiredSignatureError('expired')):
         response = await client.get('/auth/callback', params={'token': 'old-token'})
     assert response.status_code == 401
-    assert response.json()['detail'] == 'TOKEN_EXPIRED'
+    assert response.json()['code'] == 'TOKEN_EXPIRED'
 
 
 async def test_callback_email_not_in_db(client: AsyncClient) -> None:
@@ -86,13 +86,13 @@ async def test_me_authenticated(client: AsyncClient, mock_member: SimpleNamespac
 async def test_me_no_cookie(client: AsyncClient) -> None:
     response = await client.get('/auth/me')
     assert response.status_code == 401
-    assert response.json()['detail'] == 'NOT_AUTHENTICATED'
+    assert response.json()['code'] == 'NOT_AUTHENTICATED'
 
 
 async def test_me_invalid_cookie(client: AsyncClient) -> None:
     response = await client.get('/auth/me', cookies={'access_token': 'garbage.jwt.value'})
     assert response.status_code == 401
-    assert response.json()['detail'] == 'INVALID_TOKEN'
+    assert response.json()['code'] == 'INVALID_TOKEN'
 
 
 async def test_me_member_deleted(client: AsyncClient, mock_member: SimpleNamespace) -> None:

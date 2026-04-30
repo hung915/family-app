@@ -1,8 +1,11 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 from src.auth.router import router as auth_router
 from src.config import settings
+from src.exceptions import AppError
 from src.members.router import router as members_router
 
 _show_docs = settings.ENV in ('local', 'staging')
@@ -23,6 +26,47 @@ app.add_middleware(
     allow_headers=['*'],
 )
 
+
+# ── Exception handlers ────────────────────────────────────────────────────────
+
+
+@app.exception_handler(AppError)
+async def app_error_handler(request: Request, exc: AppError) -> JSONResponse:
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={'code': exc.CODE, 'detail': exc.MESSAGE},
+        headers=getattr(exc, 'headers', None),
+    )
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_error_handler(request: Request, exc: RequestValidationError) -> JSONResponse:
+    errors = [
+        {
+            'field': '.'.join(str(part) for part in e['loc'][1:]),
+            'message': e['msg'],
+        }
+        for e in exc.errors()
+    ]
+    return JSONResponse(
+        status_code=422,
+        content={
+            'code': 'VALIDATION_ERROR',
+            'detail': 'Invalid request data',
+            'errors': errors,
+        },
+    )
+
+
+@app.exception_handler(Exception)
+async def unhandled_error_handler(request: Request, exc: Exception) -> JSONResponse:
+    return JSONResponse(
+        status_code=500,
+        content={'code': 'INTERNAL_ERROR', 'detail': 'An unexpected error occurred'},
+    )
+
+
+# ── Routers ───────────────────────────────────────────────────────────────────
 
 app.include_router(auth_router)
 app.include_router(members_router)
