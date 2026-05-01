@@ -20,7 +20,7 @@ class MemberBase(CustomModel):
 
 
 class MemberCreate(MemberBase):
-    pass
+    password: str | None = Field(default=None, min_length=8)
 
 
 class MemberUpdate(CustomModel):
@@ -31,6 +31,7 @@ class MemberUpdate(CustomModel):
     due_date: date | None = None
     avatar_url: str | None = Field(default=None, max_length=512)
     email: EmailStr | None = None
+    password: str | None = Field(default=None, min_length=8)
 
 
 class MemberResponse(MemberBase):

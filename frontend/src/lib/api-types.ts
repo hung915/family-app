@@ -4,7 +4,7 @@
  */
 
 export interface paths {
-    "/auth/request-link": {
+    "/auth/login": {
         parameters: {
             query?: never;
             header?: never;
@@ -14,30 +14,10 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Request a magic login link
-         * @description Sends a one-time login link to the supplied email if it belongs to a family member.
+         * Log in with email and password
+         * @description Verifies credentials, sets an HttpOnly JWT cookie, and returns the member profile.
          */
-        post: operations["request_link_auth_request_link_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/auth/callback": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Verify magic link and issue session cookie
-         * @description Validates the token from the magic link, sets an HttpOnly JWT cookie, and redirects to the frontend.
-         */
-        get: operations["callback_auth_callback_get"];
-        put?: never;
-        post?: never;
+        post: operations["login_auth_login_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -227,13 +207,15 @@ export interface components {
             /** Email */
             email?: string | null;
         };
-        /** RequestLinkIn */
-        RequestLinkIn: {
+        /** LoginIn */
+        LoginIn: {
             /**
              * Email
              * Format: email
              */
             email: string;
+            /** Password */
+            password: string;
         };
         /** ValidationError */
         ValidationError: {
@@ -257,7 +239,7 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    request_link_auth_request_link_post: {
+    login_auth_login_post: {
         parameters: {
             query?: never;
             header?: never;
@@ -266,7 +248,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["RequestLinkIn"];
+                "application/json": components["schemas"]["LoginIn"];
             };
         };
         responses: {
@@ -276,40 +258,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": {
-                        [key: string]: string;
-                    };
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
-    };
-    callback_auth_callback_get: {
-        parameters: {
-            query: {
-                token: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["MemberResponse"];
                 };
             };
             /** @description Validation Error */

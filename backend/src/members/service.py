@@ -5,6 +5,7 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.auth.utils import hash_password
 from src.members.models import Member
 from src.members.schemas import MemberCreate, MemberUpdate
 
@@ -20,7 +21,10 @@ async def list_all(session: AsyncSession, *, limit: int = 50, offset: int = 0) -
 
 
 async def create(session: AsyncSession, data: MemberCreate) -> Member:
-    member = Member(**data.model_dump())
+    fields = data.model_dump(exclude={'password'})
+    if data.password:
+        fields['password_hash'] = hash_password(data.password)
+    member = Member(**fields)
     session.add(member)
     await session.flush()
     await session.refresh(member)
@@ -28,7 +32,10 @@ async def create(session: AsyncSession, data: MemberCreate) -> Member:
 
 
 async def update(session: AsyncSession, member: Member, data: MemberUpdate) -> Member:
-    for field, value in data.model_dump(exclude_unset=True).items():
+    fields = data.model_dump(exclude_unset=True, exclude={'password'})
+    if data.password:
+        fields['password_hash'] = hash_password(data.password)
+    for field, value in fields.items():
         setattr(member, field, value)
     await session.flush()
     await session.refresh(member)

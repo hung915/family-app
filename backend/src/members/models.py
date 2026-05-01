@@ -22,6 +22,7 @@ class Member(Base):
     due_date: Mapped[date | None] = mapped_column(nullable=True)
     avatar_url: Mapped[str | None] = mapped_column(String(512), nullable=True)
     email: Mapped[str | None] = mapped_column(String(256), nullable=True, unique=True)
+    password_hash: Mapped[str | None] = mapped_column(String(256), nullable=True)
     created_at: Mapped[datetime] = mapped_column(default=lambda: datetime.now(UTC))
     updated_at: Mapped[datetime | None] = mapped_column(
         nullable=True,
