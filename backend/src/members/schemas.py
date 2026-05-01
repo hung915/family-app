@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from datetime import date, datetime
-from uuid import UUID
 
 from pydantic import EmailStr, Field
 
@@ -35,6 +34,6 @@ class MemberUpdate(CustomModel):
 
 
 class MemberResponse(MemberBase):
-    id: UUID
+    id: int
     created_at: datetime
     updated_at: datetime | None = None
