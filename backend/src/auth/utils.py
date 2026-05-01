@@ -8,15 +8,15 @@ from passlib.context import CryptContext
 from src.auth.config import auth_settings
 from src.auth.constants import JWT_ALGORITHM, JWT_EXPIRE_DAYS
 
-_pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
+_pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto', bcrypt__truncate_error=False)
 
 
 def hash_password(password: str) -> str:
-    return _pwd_context.hash(password)
+    return _pwd_context.hash(password.encode('utf-8')[:72])
 
 
 def verify_password(plain: str, hashed: str) -> bool:
-    return _pwd_context.verify(plain, hashed)
+    return _pwd_context.verify(plain.encode('utf-8')[:72], hashed)
 
 
 def create_jwt(member_id: str, email: str) -> str:
